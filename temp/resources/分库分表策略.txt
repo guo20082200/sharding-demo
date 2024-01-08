@@ -1,0 +1,103 @@
+spring.main.allow-bean-definition-overriding=true
+#显示sql
+spring.shardingsphere.props.sql.show=true
+
+#配置数据源
+spring.shardingsphere.datasource.names=ds0,ds1
+
+#ds0数据库连接信息
+spring.shardingsphere.datasource.ds0.type=com.alibaba.druid.pool.DruidDataSource
+spring.shardingsphere.datasource.ds0.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.shardingsphere.datasource.ds0.url=jdbc:mysql://47.101.58.187:3306/t_user_db0?useUnicode=true&useSSL=false&serverTimezone=Asia/Shanghai
+spring.shardingsphere.datasource.ds0.username=root
+spring.shardingsphere.datasource.ds0.password=123456
+spring.shardingsphere.datasource.ds0.maxPoolSize=100
+spring.shardingsphere.datasource.ds0.minPoolSize=5
+
+#ds1数据库连接信息
+spring.shardingsphere.datasource.ds1.type=com.alibaba.druid.pool.DruidDataSource
+spring.shardingsphere.datasource.ds1.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.shardingsphere.datasource.ds1.url=jdbc:mysql://47.101.58.187:3306/t_user_db1?useUnicode=true&useSSL=false&serverTimezone=Asia/Shanghai
+spring.shardingsphere.datasource.ds1.username=root
+spring.shardingsphere.datasource.ds1.password=123456
+spring.shardingsphere.datasource.ds1.maxPoolSize=100
+spring.shardingsphere.datasource.ds1.minPoolSize=5
+
+#整合mybatis的配置
+mybatis.type-aliases-package=com.ppdai.shardingjdbc.entity
+
+spring.shardingsphere.sharding.tables.t_user.actual-data-nodes=ds$->{0..1}.t_user$->{0..1}
+#数据源分片策略
+spring.shardingsphere.sharding.tables.t_user.database-strategy.inline.sharding-column=sex
+#数据源分片算法
+spring.shardingsphere.sharding.tables.t_user.database-strategy.inline.algorithm-expression=ds$->{sex%2}
+#表分片策略
+spring.shardingsphere.sharding.tables.t_user.table-strategy.inline.sharding-column=age
+#表分片算法
+spring.shardingsphere.sharding.tables.t_user.table-strategy.inline.algorithm-expression=t_user$->{age%2}
+#主键的列名
+spring.shardingsphere.sharding.tables.t_user.key-generator.column=id
+spring.shardingsphere.sharding.tables.t_user.key-generator.type=SNOWFLAKE
+
+
+
+
+##---------------------------------------------------------------------------------------
+CREATE TABLE `t_user0` (
+  `id` bigint(20) DEFAULT NULL,
+  `nickname` varchar(200) DEFAULT NULL,
+  `password` varchar(200) DEFAULT NULL,
+  `age` int(11) DEFAULT NULL,
+  `sex` int(11) DEFAULT NULL,
+  `birthday` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `t_user1` (
+  `id` bigint(20) DEFAULT NULL,
+  `nickname` varchar(200) DEFAULT NULL,
+  `password` varchar(200) DEFAULT NULL,
+  `age` int(11) DEFAULT NULL,
+  `sex` int(11) DEFAULT NULL,
+  `birthday` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+数据库的指定策略
+##---------------------------------------------------------------------------------------
+
+#多数据源$->{0..N}.逻辑表名$->{0..N} 相同表
+spring.shardingsphere.sharding.tables.t_order.actual-data-nodes=ds$->{0..1}.t_order$->{0..1}
+
+
+#多数据源$->{0..N}.逻辑表名$->{0..N} 不同表
+spring.shardingsphere.sharding.tables.t_order.actual-data-nodes=ds0.t_order$->{0..1},ds1.t_order$->{2..4}
+
+
+#单数据源的配置方式
+spring.shardingsphere.sharding.tables.t_order.actual-data-nodes=ds0.t_order$->{0..4}
+
+# 全部手动指定
+spring.shardingsphere.sharding.tables.t_order.actual-data-nodes=ds0.t_order0,ds1.t_order0,ds0.t_order1,ds1.t_order1
+
+
+# inline分片策略
+spring.shardingsphere.sharding.tables.t_order.actual-data-nodes=ds$->{0..1}.t_order$->{0..1}
+#数据源分片策略
+spring.shardingsphere.sharding.tables.t_order.database-strategy.inline.sharding-column=user_id
+#数据源分片算法
+spring.shardingsphere.sharding.tables.t_order.database-strategy.inline.algorithm-expression=ds$->{user_id%2}
+#表分片策略
+spring.shardingsphere.sharding.tables.t_order.table-strategy.inline.sharding-column=order_id
+#表分片算法
+spring.shardingsphere.sharding.tables.t_order.table-strategy.inline.algorithm-expression=t_order$->{order_id%2}
+
+
+-- 分布式主键配置
+Sharding-Jdbc可以配置分布式主键生成策略。默认使用雪花算法，生成64bit的长整型数据，也支持UUID的方式。
+#主键的列名
+spring.shardingsphere.sharding.tables.t_order.key-generator.column=id
+#主键生成策略
+spring.shardingsphere.sharding.tables.t_order.key-generator.type=SNOWFLAKE
+
+

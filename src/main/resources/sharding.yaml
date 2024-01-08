@@ -1,0 +1,38 @@
+mode:
+  type:
+   - Cluster
+  repository:
+    type: ZooKeeper
+    props:
+      namespace: governance
+      server-lists: 172.16.23.77:2181
+      retryIntervalMilliseconds: 5000
+      timeToLiveSeconds: 60
+dataSources:
+  master:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: org.postgresql.Driver
+    jdbcUrl: jdbc:postgresql://172.16.23.77:10031/testdb
+    username: postgres
+    password: 123456
+  slave:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: org.postgresql.Driver
+    jdbcUrl: jdbc:postgresql://172.16.23.77:10032/testdb
+    username: postgres
+    password: 123456
+rules:
+  - !READWRITE_SPLITTING
+    dataSources:
+      readwrite_ds:
+        staticStrategy:
+          writeDataSourceName: master
+          readDataSourceNames:
+            - slave
+        # staticStrategy: Static
+        loadBalancerName: random
+    loadBalancers:
+      random:
+        type: RANDOM
+props:
+  sql-show: true

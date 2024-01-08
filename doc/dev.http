@@ -1,0 +1,12 @@
+POST http://localhost:8080/api/user/save
+Content-Type: application/json
+
+{}
+
+###
+GET http://localhost:8080/api/user/findUsers
+Accept: application/json
+
+###
+POST http://localhost:8080/api/user/update
+Accept: application/json

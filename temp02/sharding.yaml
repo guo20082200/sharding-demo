@@ -6,7 +6,7 @@ mode:
     props:
       namespace: governance
       server-lists: 172.16.23.77:2181
-      retryIntervalMilliseconds: 60000
+      retryIntervalMilliseconds: 5000
       timeToLiveSeconds: 60
 dataSources:
   master:

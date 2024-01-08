@@ -18,7 +18,7 @@ public class UserController {
     @Autowired
     private UserMapper userMapper;
 
-    @PostMapping("/save")
+    /*@PostMapping("/save")
     public String addUser() {
         User user = new User();
         user.setId(1);
@@ -42,10 +42,15 @@ public class UserController {
         User userById3 = userMapper.findUsersById(2);
         System.out.println(userById3.getNickname());
         return "success";
-    }
+    }*/
 
     @GetMapping("/findUsers")
     public List<User> findUsers() {
-        return userMapper.findUsers();
+        return userMapper.selectList(null);
+    }
+
+    @GetMapping("/findUsersById")
+    public User findUsersById() {
+        return userMapper.selectById(1);
     }
 }
